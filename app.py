@@ -125,7 +125,8 @@ with tab_price:
     with c2:
         season = st.radio("Season", ["2025/26", "2026/27 so far"], horizontal=True,
                           help="2025/26 = full season, priced at the summer 2026 market. "
-                               "2026/27 so far = a handful of games, priced at today's market: much wider ranges.")
+                               "2026/27 so far = this season's games, leaning on his last full season until the minutes add up; "
+                               "priced at today's market, with wider ranges.")
     pool = players[players["season"] == season]
     with st.expander("Filters"):
         f1, f2 = st.columns(2)
@@ -148,8 +149,9 @@ with tab_price:
     v = v.sort_values("price", ascending=False).reset_index(drop=True)
 
     if season != "2025/26":
-        st.info("Early in the season: these prices rest on a few games, so the ranges are wide on purpose. "
-                "Read them as a first look, not a number to quote.", icon="⏱️")
+        st.info("Early in the season: a few games say little, so each price leans on the player's last full season "
+                "(the fewer minutes this year, the more it leans). No full season behind him: this year's games only, "
+                "and a wide range. Read them as a first look, not a number to quote.", icon="⏱️")
 
     if v.empty:
         st.write("No players match. Loosen the filters or check the spelling.")
@@ -167,13 +169,17 @@ with tab_price:
         idx = sel[0] if sel else (0 if len(v) == 1 or q else None)
         if idx is not None:
             r = v.iloc[idx]
+            h = float(r.get("history", 0) or 0)
+            hist_note = "" if season == "2025/26" else (
+                f" About {h:.0%} of his worth here comes from his last full season, the rest from this one."
+                if h > 0 else " No full season behind him in my data: this rests on this season's games alone.")
             st.markdown(f"""
 <div class='price-card'>
   <div class='who'>{r['player']} · {r['team']} · {r['league']} · {r['role']} · {r['age']:.0f} · {r['minutes']:,} min ({r['season']})</div>
   <div class='big'>{eur(r['price'])}</div>
   <div class='rng'>80% range: {eur(r['price_low'])} – {eur(r['price_high'])}</div>
   <div class='note'>What his profile is worth: {eur(r['worth'])} ({eur(r['worth_low'])} – {eur(r['worth_high'])}).
-  The fair price is what clubs have paid for players like him: same worth, age, role, league and situation.</div>
+  The fair price is what clubs have paid for players like him: same worth, age, role, league and situation.{hist_note}</div>
 </div>""", unsafe_allow_html=True)
             band = pd.DataFrame([
                 {"what": "Fair price", "lo": r["price_low"], "hi": r["price_high"], "mid": r["price"]},
@@ -213,8 +219,14 @@ with tab_market:
                 f"(to {market['trained_until'][:7]}). Recent moves count more, so this is today's market.")
 
     st.subheader("Where he's sold from")
-    st.markdown("Against a player sold by a Serie A club. English clubs buy most players sold from English "
-                "leagues, and they pay more: it shows up here as the selling league.")
+    sl = {r["league"]: r["pct"] for r in market["sellers"]}
+    top, low = max(sl, key=sl.get), min(sl, key=sl.get)
+    st.markdown(f"Two players with the same worth don't sell for the same fee: it depends on the league that sells "
+                f"them. Each bar is the fee compared with the same player sold by a Serie A club. A player "
+                f"sold from {top} goes for **{sl[top]:+.0f}%**, one sold from {low} for **{sl[low]:+.0f}%**.")
+    st.markdown("<div class='small'>The reason is mostly who buys. Players in England's lower leagues are bought "
+                "by richer English clubs; South American clubs sell to Europe. The fee follows the buyer's money, "
+                "and it shows up here under the seller's league.</div>", unsafe_allow_html=True)
     st.altair_chart(effect_bars(pd.DataFrame(market["sellers"]), "league", ref_note="vs a Serie A seller"),
                     width="stretch", theme=None)
 
@@ -227,7 +239,8 @@ with tab_market:
     base = alt.Chart(infl).encode(x=alt.X("label:N", title="summer window", sort=list(infl["label"]),
                                           axis=alt.Axis(labelAngle=0, ticks=False)))
     bars = base.mark_bar(cornerRadiusEnd=4, width={"band": 0.6}).encode(
-        y=alt.Y("pct:Q", title="fee vs worth", axis=alt.Axis(labelExpr="datum.label + '%'")),
+        y=alt.Y("pct:Q", title="fee vs worth", axis=alt.Axis(labelExpr="datum.label + '%'"),
+                scale=alt.Scale(domain=[min(0, infl["pct"].min()) - 5, max(0, infl["pct"].max()) + 5])),   # room for the labels
         color=alt.condition("datum.pct >= 0", alt.value(UP), alt.value(DOWN)),
         tooltip=[alt.Tooltip("label:N", title="Window"), alt.Tooltip("pct:Q", title="Fee vs worth, %", format="+.0f"),
                  alt.Tooltip("moves:Q", title="Moves")])
@@ -237,12 +250,17 @@ with tab_market:
                           height=240), width="stretch", theme=None)
 
     st.subheader("Age")
-    st.markdown("Against a 25-year-old of the same worth. Youth costs extra, but the premium shrinks as the price "
-                "goes up: for a cheap teenager clubs pay roughly double, for an expensive one far less.")
     ac = pd.DataFrame(market["age_curve"])
+    ac["worth"] = ac["worth"].str.replace(r"^(€\S+) worth$", r"player worth \1", regex=True)
     order = list(dict.fromkeys(ac["worth"]))
+    at = lambda w, a: float(ac[(ac["worth"] == w) & (ac["age"] == a)]["pct"].iloc[0])
+    st.markdown(f"Young players cost more than their worth says, older ones less. The lines compare the fee with a "
+                f"25-year-old of the same worth.\n\n"
+                f"- A 19-year-old worth €2m sells for **{at(order[0], 19):+.0f}%**: about {1 + at(order[0], 19) / 100:.1f} times the fee of the 25-year-old.\n"
+                f"- A 19-year-old worth €40m: **{at(order[-1], 19):+.0f}%**. The extra for youth is smaller on expensive players.\n"
+                f"- A 30-year-old worth €2m: **{at(order[0], 30):+.0f}%**.")
     line = alt.Chart(ac).mark_line(strokeWidth=2).encode(
-        x=alt.X("age:Q", title="age", scale=alt.Scale(domain=[18, 34])),
+        x=alt.X("age:Q", title="age", scale=alt.Scale(domain=[18, 34]), axis=alt.Axis(values=list(range(18, 35, 2)), format="d")),
         y=alt.Y("pct:Q", title="fee vs a 25-year-old", axis=alt.Axis(labelExpr="datum.label + '%'")),
         color=alt.Color("worth:N", sort=order, scale=alt.Scale(domain=order, range=[UP, DOWN, THIRD]), title=None),
         tooltip=[alt.Tooltip("worth:N", title=""), alt.Tooltip("age:Q", title="Age"),
@@ -273,6 +291,9 @@ with tab_market:
 with tab_check:
     bt = {r["method"]: r for r in market["backtest"]}
     fair, worth_only, tm = bt.get("fair fee", {}), bt.get("worth alone", {}), bt.get("Transfermarkt value", {})
+    blend = bt.get("blend (fair fee + Transfermarkt)", {})
+    ck = market.get("checks", {})
+    ten = ck.get("ten_million", {})
     st.markdown("Every transfer window since summer 2024, priced by a model trained only on the moves before it, "
                 "then checked against the fee that was actually paid.")
     t1, t2, t3 = st.columns(3)
@@ -280,7 +301,9 @@ with tab_check:
                 f"<div class='l'>of real fees inside my 80% range. It should be about 80: the ranges are honest.</div></div>",
                 unsafe_allow_html=True)
     t2.markdown(f"<div class='tile'><div class='v'>{fair.get('median_abs_pct_error', 0):.0f}%</div>"
-                f"<div class='l'>typical miss on a single fee (median). Fees are noisy: one player, one deal.</div></div>",
+                f"<div class='l'>typical miss on a single fee (median). "
+                + (f"On a €10m price, half of the real fees fell between {eur(ten['fair']['q25'])} and {eur(ten['fair']['q75'])}."
+                   if ten else "Fees are noisy: one player, one deal.") + "</div></div>",
                 unsafe_allow_html=True)
     t3.markdown(f"<div class='tile'><div class='v'>{worth_only.get('median_abs_pct_error', 0):.0f}%</div>"
                 f"<div class='l'>typical miss using his worth alone, without what I learned from fees.</div></div>",
@@ -288,41 +311,82 @@ with tab_check:
     st.write("")
     w = pd.DataFrame(market["backtest_windows"])
     w["method"] = w["method"].replace({"fair fee": "My fair price", "worth alone": "My worth alone",
-                                       "Transfermarkt value": "Transfermarkt value at the move"})
-    order_m = ["My fair price", "My worth alone", "Transfermarkt value at the move"]
+                                       "Transfermarkt value": "Transfermarkt value at the move",
+                                       "blend (fair fee + Transfermarkt)": "Half and half"})
+    order_m = [m for m in ["My fair price", "My worth alone", "Transfermarkt value at the move", "Half and half"]
+               if m in set(w["method"])]
     order_w = list(dict.fromkeys(w["window"]))
     chart = alt.Chart(w).mark_bar(cornerRadiusEnd=3).encode(
         x=alt.X("window:N", sort=order_w, title=None, axis=alt.Axis(labelAngle=0, ticks=False)),
         xOffset=alt.XOffset("method:N", sort=order_m),
         y=alt.Y("median_abs_pct_error:Q", title="typical miss (median, %)"),
-        color=alt.Color("method:N", sort=order_m, scale=alt.Scale(domain=order_m, range=[UP, NEUTRAL, DOWN]), title=None),
+        color=alt.Color("method:N", sort=order_m, scale=alt.Scale(domain=order_m, range=[UP, NEUTRAL, DOWN, THIRD][:len(order_m)]), title=None),
         tooltip=[alt.Tooltip("window:N", title="Window"), alt.Tooltip("method:N", title=""),
                  alt.Tooltip("median_abs_pct_error:Q", title="Typical miss, %", format=".0f"),
                  alt.Tooltip("inside_80pct_range:Q", title="Inside range, %", format=".0f"),
                  alt.Tooltip("rows:Q", title="Moves")])
     st.altair_chart(theme(chart, height=280), width="stretch", theme=None)
     st.markdown(f"""
-**Where I lose, said plainly.** Transfermarkt's value at the time of the move misses less than my price
-({tm.get('median_abs_pct_error', 0):.0f}% against {fair.get('median_abs_pct_error', 0):.0f}%). Two likely reasons: a
-valuation can move with the rumours, so by the time a deal is signed it may already reflect the fee; and it takes
-contract length into account for every past move, which my data can't. My price is built from what a player does on the pitch, so it can
-price players before the market starts talking about them. That's the point of it, and also its limit.
+**Where I lose, said plainly.** Across all moves, Transfermarkt's value at the time of the move misses less than my
+price ({tm.get('median_abs_pct_error', 0):.0f}% against {fair.get('median_abs_pct_error', 0):.0f}%). It moves with the
+news around a player and it knows his contract; my price knows neither for past moves.
 
 The fair price beats my own worth number in every window ({fair.get('median_abs_pct_error', 0):.0f}% against
 {worth_only.get('median_abs_pct_error', 0):.0f}%): learning from fees is worth it. January windows are the hardest
-(fewer, stranger deals). If you think a number here is wrong, [tell me]({SITE}).
+(fewer, stranger deals).
 """)
+    if ck:
+        st.subheader("Where my price wins, and where it doesn't")
+        st.markdown("The same test, split by the kind of deal. Each column is a typical miss: lower is better. "
+                    "My price does best on the cheapest and the most expensive deals, on young players and on "
+                    "goalkeepers. Transfermarkt does best on players aged 25 to 30 and on mid-priced deals.")
+        wh = pd.DataFrame(ck["where"])
+        best = wh[["fair", "tm", "blend"]].idxmin(axis=1).map({"fair": "My fair price", "tm": "Transfermarkt", "blend": "Half and half"})
+        st.dataframe(pd.DataFrame({
+            "Deals": np.where(wh["group"].isin(["All", "Role"]), wh["segment"], wh["group"] + ": " + wh["segment"]),
+            "Moves": wh["moves"], "My fair price": wh["fair"].map(lambda x: f"{x:.0f}%"),
+            "Transfermarkt": wh["tm"].map(lambda x: f"{x:.0f}%"), "Half and half": wh["blend"].map(lambda x: f"{x:.0f}%"),
+            "Lowest miss": best}), hide_index=True, width="stretch", height=38 + 35 * len(wh))
+        if blend:
+            st.markdown(f"""
+**Half and half.** Averaging my price with Transfermarkt's value gives the same typical miss as Transfermarkt alone
+({blend.get('median_abs_pct_error', 0):.0f}%), but fewer big misses, because the two get different players wrong.
+I don't show that average here: this page carries my numbers only.
+""")
+        st.subheader("Does it see things first?")
+        ah = pd.DataFrame(ck["ahead"])
+        ah["group"] = ah["group"].replace({"My worth far above": "I rated him far higher", "Above": "Higher",
+                                           "About equal": "About the same", "Below": "Lower",
+                                           "My worth far below": "I rated him far lower"})
+        st.markdown(f"""
+When my worth and the public value disagree, who turns out right? I checked {ck['ahead_rows']:,} past player-seasons.
+
+Players I rated far higher than their public value saw that value grow **{abs(ah['pct'].iloc[-1]):.0f}% more** than
+similar players over the next year. Players I rated far lower: **{abs(ah['pct'].iloc[0]):.0f}% less**. So the model
+does pick some things up early. Only some: most disagreements stay disagreements.
+""")
+        st.altair_chart(effect_bars(ah.rename(columns={"group": "gap"}), "gap", sort=list(ah["group"])[::-1],
+                                    ref_note="public value a year later, against similar players (same age and value)"),
+                        width="stretch", theme=None)
+    st.markdown(f"If you think a number here is wrong, [tell me]({SITE}).")
 
 # ---------------------------------------------------------------- 4. method and limits
 with tab_method:
     fr = market.get("value_r2_forward", [])
+    re_ = {r["role"]: r["pct"] for r in market.get("checks", {}).get("role_error", [])}
+    role_err = (f" (typical gap {re_['Goalkeeper']:.0f}% and {re_['Striker']:.0f}%, against "
+                f"{min(v for k, v in re_.items() if k not in ('Goalkeeper', 'Striker')):.0f}–"
+                f"{max(v for k, v in re_.items() if k not in ('Goalkeeper', 'Striker')):.0f}% for the other roles)") if re_ else ""
     st.markdown(f"""
 **Two steps.**
 
 1. **Worth.** What a player's profile is worth: his numbers in his role from my own event-data models, age,
    minutes, league level and team strength (my Dixon-Coles ratings). Trained on {market['value_rows']:,}
-   player-seasons against public market-value estimates, and checked forward in time on seasons it hadn't seen
-   (R² {', '.join(f'{x:.2f}' for x in fr)}).
+   player-seasons against public market-value estimates. Tested on the last {len(fr)} seasons, each priced by a
+   model that had only seen the seasons before it, it explains {min(fr):.0%} to {max(fr):.0%} of the differences in
+   value between players. Most of the level comes from age, league and club; what he does on the
+   pitch decides where he sits among players like him. Early in a season, this year's games are mixed with his last
+   full season: the fewer minutes so far, the more last season counts.
 2. **Fair price.** What clubs actually paid for players of that worth: {market['moves']:,} permanent transfers with a
    reported fee. It learns where he's sold from, the selling club's strength, role, age, years at the club, the
    window, and football inflation (recent moves weigh more: half-life {market.get('half_life', 2):g} years). For this
@@ -339,20 +403,20 @@ not from what a Premier League club would pay.
   leans towards deals that made the news.
 - Mid-season moves are left out of the training: my season numbers merge the time at both clubs.
 - Injuries, character, the agent. That's what video and a phone call are for.
-- Event data struggles with defenders and goalkeepers, so their worth is the least reliable part.
+- Goalkeepers and strikers: that's where my worth sits furthest from public estimates{role_err}. Defenders are no worse than midfielders.
 
-**Data.** Player numbers come from my own models on public event data. Worth is trained on public market-value
+**Data.** Player numbers come from my own models on event data. Worth is trained on public market-value
 estimates (Transfermarkt) and the fees they report. The prices on this page are my model's, not Transfermarkt's, and
 nothing here republishes anyone's data. On paid work I can run the same pipeline on your licensed data.
 
-Built with Python, scikit-learn and Streamlit; AI helped me build and edit it, as usual, to be fair.
+Built with Python, XGBoost, CatBoost and Streamlit; AI helped me build and edit it, as usual, to be fair.
 """)
 
 # ---------------------------------------------------------------- footer
 st.markdown(f"""
 <div class='cta'>
 <b>Looking at a player right now?</b> Send me the name and the league in two lines. A
-<a href='{SITE}'>Second opinion</a> (€350) gives you the price, the role he actually plays, how his league move has
+<a href='{SITE}'>Second opinion</a> (€200) gives you the price, the role he actually plays, how his league move has
 gone for others, the video checks to run and a sign / monitor / pass verdict, with the limits stated.
 <br><br>Not buying yet? <a href='{NEWSLETTER}'>The Cutback</a> publishes this kind of work in full, misses included.
 </div>

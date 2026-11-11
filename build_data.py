@@ -3,6 +3,8 @@ build_data.py - export the app's data from the value model (Python FTBLData). Ru
 
 What goes into the app, on purpose: only this model's own outputs (worth, fair price, ranges) and aggregate market
 effects. No Transfermarkt values, ids or contract dates, no event data. Writes data/players.csv and data/market.json.
+The blend fee (half fair fee, half Transfermarkt value) is NOT exported per player: with the fair price next to it
+anyone could work his Transfermarkt value back out. Only its backtest scores go in.
 """
 import json
 import sys
@@ -18,6 +20,7 @@ import tm_value as tv    # noqa: E402
 
 OUT = Path(__file__).resolve().parent / "data"
 FINISHED, RUNNING = "2526", "2627"
+AHEAD_SEASONS = ["2122", "2223", "2324", "2425", "2022", "2023", "2024"]   # finished, with 12 months of valuations after them
 MIN_MINUTES = 600
 LEAGUE_NAMES = {
     "ENG-Premier League": "Premier League", "ENG-Championship": "Championship", "ENG-League One": "League One",
@@ -54,8 +57,66 @@ def players(meta, fm):
         "worth": (v["model_value"] / 1e6).round(2), "worth_low": (v["model_low"] / 1e6).round(2),
         "worth_high": (v["model_high"] / 1e6).round(2),
         "price": (v["fair_fee"] / 1e6).round(2), "price_low": (v["fee_low"] / 1e6).round(2),
-        "price_high": (v["fee_high"] / 1e6).round(2)})
+        "price_high": (v["fee_high"] / 1e6).round(2),
+        # share of the running-season worth that comes from his last full season (0 = this season's games only)
+        "history": v["history_weight"].fillna(0).round(2) if "history_weight" in v else 0.0})
     return out.sort_values(["season", "price"], ascending=[True, False]).reset_index(drop=True)
+
+
+def _miss(e):
+    return round(float(np.expm1(np.abs(e).median()) * 100), 1)
+
+
+def checks(sc, d):
+    """Aggregates behind 'How often it's right': where each method wins, the miss in euros, worth error by role, and
+    whether a gap between my worth and the public estimate closes over the next year. Aggregates only."""
+    t = tv.fee_backtest_rows(d)
+    b = t[t["p_tm"].notna() & t["p_blend"].notna()].copy()
+    b["age_b"] = pd.cut(b["age"], [0, 21, 24, 27, 30, 99], labels=["21 and under", "22–24", "25–27", "28–30", "31 and over"]).astype(str)
+    b["fee_b"] = pd.cut(np.exp(b["p_fair"]), [0, 2e6, 5e6, 15e6, 40e6, 1e12],
+                        labels=["under €2m", "€2–5m", "€5–15m", "€15–40m", "€40m and over"]).astype(str)
+    b["role_b"] = b["position_group"].map(ROLE_NAMES)
+
+    def seg(group, label, g):
+        return {"group": group, "segment": label, "moves": int(len(g)), "fair": _miss(g["y"] - g["p_fair"]),
+                "tm": _miss(g["y"] - g["p_tm"]), "blend": _miss(g["y"] - g["p_blend"])}
+
+    where = [seg("All", "All moves", b)]
+    for group, col, order in (("Fair price", "fee_b", ["under €2m", "€2–5m", "€5–15m", "€15–40m", "€40m and over"]),
+                              ("Age", "age_b", ["21 and under", "22–24", "25–27", "28–30", "31 and over"]),
+                              ("Role", "role_b", list(ROLE_NAMES.values()))):
+        where += [seg(group, k, b[b[col] == k]) for k in order if (b[col] == k).sum() >= 50]
+    ratio = lambda p: np.exp(b["y"] - b[p])               # real fee / estimate
+    ten = {name: {"q10": round(float(ratio(p).quantile(.10) * 10), 1), "q25": round(float(ratio(p).quantile(.25) * 10), 1),
+                  "q75": round(float(ratio(p).quantile(.75) * 10), 1), "q90": round(float(ratio(p).quantile(.90) * 10), 1),
+                  "within_half": round(float(((ratio(p) > 0.5) & (ratio(p) < 1.5)).mean() * 100), 0)}
+           for name, p in (("fair", "p_fair"), ("tm", "p_tm"), ("blend", "p_blend"))}
+    # worth against the public estimate, by role (finished seasons, players the model never saw)
+    fin = sc[sc["in_training"].astype(bool) & (sc["tm_value"] > 0)].copy()
+    role_error = [{"role": ROLE_NAMES[r], "pct": _miss(g["residual"])} for r, g in fin.groupby("position_group") if r in ROLE_NAMES]
+    # does a gap close? worth vs the public estimate at the end of a season -> the estimate's move over the next 12
+    # months, beyond what players of his age and value level did
+    val = pd.read_csv(tc.TM_DATA / "valuations.csv", usecols=["player_id", "date", "market_value_in_eur"])
+    val["t"] = pd.to_datetime(val["date"], errors="coerce", format="mixed").astype("datetime64[ns]")
+    val = val.dropna(subset=["t"]).sort_values("t")[["player_id", "t", "market_value_in_eur"]]
+    a = fin[fin["season_id"].isin(AHEAD_SEASONS) & (fin["minutes_played"] >= 900)].copy()
+    a["t"] = pd.to_datetime(a["ref_date"], errors="coerce").astype("datetime64[ns]") + pd.Timedelta(days=365)
+    a = pd.merge_asof(a.dropna(subset=["t"]).sort_values("t"), val, on="t", by="player_id", direction="backward",
+                      tolerance=pd.Timedelta(days=120))
+    a = a[a["market_value_in_eur"] > 0].copy()
+    a["gap"] = -a["residual"]                              # log(worth / estimate): > 0 = my worth is above
+    a["change"] = np.log(a["market_value_in_eur"] / a["tm_value"])
+    a["age_b"] = pd.cut(a["age"], [15, 21, 24, 27, 30, 45])
+    a["lv_b"] = pd.qcut(np.log(a["tm_value"]), 5, labels=False)
+    a["excess"] = a["change"] - a.groupby(["age_b", "lv_b"], observed=True)["change"].transform("mean")
+    labels = ["My worth far below", "Below", "About equal", "Above", "My worth far above"]
+    a["q"] = pd.qcut(a["gap"], 5, labels=labels)
+    ahead = [{"group": k, "players": int(len(g)), "gap_pct": round(float(np.expm1(g["gap"].median()) * 100), 0),
+              "pct": round(float(np.expm1(g["excess"].mean()) * 100), 1)} for k, g in a.groupby("q", observed=True)]
+    X = np.column_stack([np.ones(len(a)), a["gap"]])
+    closed = float(np.linalg.lstsq(X, a["excess"].to_numpy(), rcond=None)[0][1])
+    return {"where": where, "ten_million": ten, "role_error": sorted(role_error, key=lambda r: r["pct"]),
+            "ahead": ahead, "ahead_rows": int(len(a)), "ahead_share_closed": round(closed, 2), "blend_rows": int(len(b))}
 
 
 def market(meta, fm):
@@ -97,6 +158,7 @@ def market(meta, fm):
         "inflation": [{"window": r.window, "moves": int(r.moves), "pct": float(r.pct)} for r in infl.itertuples()],
         "backtest": pooled.reset_index().to_dict("records"),
         "backtest_windows": table.to_dict("records"),
+        "checks": checks(sc, d),
     }
 
 
