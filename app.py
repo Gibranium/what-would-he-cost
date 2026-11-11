@@ -46,13 +46,15 @@ h1 {{ font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.2rem; }}
 
 
 @st.cache_data
-def load():
+def load(stamp):
+    """stamp = the data files' modification times: new data after a push = a new cache entry (the server keeps the
+    old cache alive across a redeploy, so without it the app showed the new code on the old data)."""
     p = pd.read_csv(HERE / "data" / "players.csv")
     m = json.loads((HERE / "data" / "market.json").read_text())
     return p, m
 
 
-players, market = load()
+players, market = load(tuple((HERE / "data" / f).stat().st_mtime_ns for f in ("players.csv", "market.json")))
 
 
 def eur(x):
