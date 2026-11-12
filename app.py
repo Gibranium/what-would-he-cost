@@ -383,7 +383,8 @@ with tab_method:
 **Two steps.**
 
 1. **Worth.** What a player's profile is worth: his numbers in his role from my own event-data models, age,
-   minutes, league level and team strength (my Dixon-Coles ratings). Trained on {market['value_rows']:,}
+   minutes, league level, team strength (my Dixon-Coles ratings) and his club's standing with the market (how
+   its squad was valued the season before, against its league). Trained on {market['value_rows']:,}
    player-seasons against public market-value estimates. Tested on the last {len(fr)} seasons, each priced by a
    model that had only seen the seasons before it, it explains {min(fr):.0%} to {max(fr):.0%} of the differences in
    value between players. Most of the level comes from age, league and club; what he does on the
@@ -405,6 +406,8 @@ not from what a Premier League club would pay.
   leans towards deals that made the news.
 - Mid-season moves are left out of the training: my season numbers merge the time at both clubs.
 - Injuries, character, the agent. That's what video and a phone call are for.
+- Players of clubs new to their league this season: early on, their worth can run high, because there is no last
+  season at that level to lean on. Read them with care until about half a season.
 - Goalkeepers and strikers: that's where my worth sits furthest from public estimates{role_err}. Defenders are no worse than midfielders.
 
 **Data.** Player numbers come from my own models on event data. Worth is trained on public market-value
