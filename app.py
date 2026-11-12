@@ -350,21 +350,36 @@ with tab_check:
                  alt.Tooltip("inside_80pct_range:Q", title="Inside range, %", format=".0f"),
                  alt.Tooltip("rows:Q", title="Moves")])
     st.altair_chart(theme(chart, height=280), width="stretch", theme=None)
+    ww = w.pivot(index="window", columns="method", values="median_abs_pct_error").reindex(order_w)
+    n_beat = int((ww["My fair price"] < ww["My worth alone"]).sum())
+    beat_txt = "every window" if n_beat == len(ww) else f"{n_beat} of the {len(ww)} windows"
+    hard = ww["My fair price"].idxmax()
+    hard_txt = (f"The hardest window for my price was {hard} ({ww['My fair price'].max():.0f}%)"
+                + (": winter windows have fewer, stranger deals." if hard.startswith("winter") else "."))
     st.markdown(f"""
 **Where I lose, said plainly.** Across all moves, Transfermarkt's value at the time of the move misses less than my
 price ({tm.get('median_abs_pct_error', 0):.0f}% against {fair.get('median_abs_pct_error', 0):.0f}%). It moves with the
 news around a player and it knows his contract; my price knows neither for past moves.
 
-The fair price beats my own worth number in every window ({fair.get('median_abs_pct_error', 0):.0f}% against
-{worth_only.get('median_abs_pct_error', 0):.0f}%): learning from fees is worth it. January windows are the hardest
-(fewer, stranger deals).
+The fair price beats my own worth number over all moves ({fair.get('median_abs_pct_error', 0):.0f}% against
+{worth_only.get('median_abs_pct_error', 0):.0f}%) and in {beat_txt}: learning from fees is worth it. {hard_txt}
 """)
     if ck:
         st.subheader("Where my price wins, and where it doesn't")
-        st.markdown("The same test, split by the kind of deal. Each column is a typical miss: lower is better. "
-                    "My price does best on the cheapest and the most expensive deals, on young players and on "
-                    "goalkeepers. Transfermarkt does best on players aged 25 to 30 and on mid-priced deals.")
         wh = pd.DataFrame(ck["where"])
+        seg = wh[wh["group"] != "All"]              # the sentence is read from the table, never typed
+        lab = lambda r: ({"Fair price": "prices ", "Age": "ages "}.get(r["group"], "")
+                         + (r["segment"].lower() + "s" if r["group"] == "Role" else r["segment"]))
+        mine = [lab(r) for _, r in seg.iterrows() if r["fair"] < r["tm"]]
+        theirs = [lab(r) for _, r in seg.iterrows() if r["fair"] >= r["tm"]]
+        join = lambda xs: ", ".join(xs[:-1]) + " and " + xs[-1] if len(xs) > 1 else "".join(xs)
+        if mine and theirs:
+            where_txt = (f"Against Transfermarkt's value, my price misses less on {join(mine)}; Transfermarkt misses "
+                         f"less on {join(theirs) if len(theirs) <= len(mine) else 'everything else'}.")
+        else:
+            where_txt = ("My price misses less than Transfermarkt's value in every group." if mine
+                         else "Transfermarkt's value misses less than my price in every group.")
+        st.markdown("The same test, split by the kind of deal. Each column is a typical miss: lower is better. " + where_txt)
         best = wh[["fair", "tm", "blend"]].idxmin(axis=1).map({"fair": "My fair price", "tm": "Transfermarkt", "blend": "Half and half"})
         st.dataframe(pd.DataFrame({
             "Deals": np.where(wh["group"].isin(["All", "Role"]), wh["segment"], wh["group"] + ": " + wh["segment"]),
@@ -373,8 +388,8 @@ The fair price beats my own worth number in every window ({fair.get('median_abs_
             "Lowest miss": best}), hide_index=True, width="stretch", height=38 + 35 * len(wh))
         if blend:
             st.markdown(f"""
-**Half and half.** Averaging my price with Transfermarkt's value gives the same typical miss as Transfermarkt alone
-({blend.get('median_abs_pct_error', 0):.0f}%), but fewer big misses, because the two get different players wrong.
+**Half and half.** Averaging my price with Transfermarkt's value gives about the same typical miss as Transfermarkt alone
+({blend.get('median_abs_pct_error', 0):.0f}% against {tm.get('median_abs_pct_error', 0):.0f}%), but fewer big misses, because the two get different players wrong.
 I don't show that average here: this page carries my numbers only.
 """)
         st.subheader("Does it see things first?")
@@ -398,9 +413,13 @@ does pick some things up early. Only some: most disagreements stay disagreements
 with tab_method:
     fr = market.get("value_r2_forward", [])
     re_ = {r["role"]: r["pct"] for r in market.get("checks", {}).get("role_error", [])}
-    role_err = (f" (typical gap {re_['Goalkeeper']:.0f}% and {re_['Striker']:.0f}%, against "
-                f"{min(v for k, v in re_.items() if k not in ('Goalkeeper', 'Striker')):.0f}–"
-                f"{max(v for k, v in re_.items() if k not in ('Goalkeeper', 'Striker')):.0f}% for the other roles)") if re_ else ""
+    far = sorted(re_, key=re_.get, reverse=True)[:2]          # the two roles furthest from public estimates, from the data
+    role_err = (f" (typical gap {re_[far[0]]:.0f}% and {re_[far[1]]:.0f}%, against "
+                f"{min(v for k, v in re_.items() if k not in far):.0f}–"
+                f"{max(v for k, v in re_.items() if k not in far):.0f}% for the other roles)") if re_ else ""
+    far_txt = (" and ".join(r.lower() + "s" for r in far)).capitalize() if re_ else "Goalkeepers and strikers"
+    cb_txt = (" Defenders are no worse than midfielders."
+              if re_ and re_.get("Centre-back", 0) <= re_.get("Central midfielder", 0) + 1 else "")
     bu = market.get("buyer")
     if bu:
         prem = {p["worth"]: p["pct"] for p in bu["premium"]}
@@ -447,7 +466,7 @@ where players like him realistically went."""
 - Injuries, character, the agent. That's what video and a phone call are for.
 - Players of clubs new to their league this season: early on, their worth can run high, because there is no last
   season at that level to lean on. Read them with care until about half a season.
-- Goalkeepers and strikers: that's where my worth sits furthest from public estimates{role_err}. Defenders are no worse than midfielders.
+- {far_txt}: that's where my worth sits furthest from public estimates{role_err}.{cb_txt}
 
 **Data.** Player numbers come from my own models on event data. Worth is trained on public market-value
 estimates (Transfermarkt) and the fees they report. The prices on this page are my model's, not Transfermarkt's, and
