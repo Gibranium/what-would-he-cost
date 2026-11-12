@@ -58,6 +58,10 @@ def players(meta, fm):
         "worth_high": (v["model_high"] / 1e6).round(2),
         "price": (v["fair_fee"] / 1e6).round(2), "price_low": (v["fee_low"] / 1e6).round(2),
         "price_high": (v["fee_high"] / 1e6).round(2),
+        # the two prices behind the fair price, and how often players like him are bought by a Premier League club
+        "price_pl": (v["fee_pl"] / 1e6).round(2) if "fee_pl" in v else np.nan,
+        "price_other": (v["fee_other"] / 1e6).round(2) if "fee_other" in v else np.nan,
+        "pl_chance": v["p_pl"].round(2) if "p_pl" in v else np.nan,
         # share of the running-season worth that comes from his last full season (0 = this season's games only)
         "history": v["history_weight"].fillna(0).round(2) if "history_weight" in v else 0.0})
     return out.sort_values(["season", "price"], ascending=[True, False]).reset_index(drop=True)
@@ -145,9 +149,22 @@ def market(meta, fm):
              .agg(moves=("r", "size"), r=("r", "median")).reset_index())
     infl["pct"] = (np.expm1(infl["r"]) * 100).round(1)
     table, pooled = tv.fee_backtest(d)
+    buyer = None
+    if fm.get("buyer") and "buyer_pl" in d:                 # who pays: the Premier League premium, in aggregates
+        bb = dict(zip(fm["cols"], fm["beta"]))
+        pl, su = d["buyer_pl"] == 1, d["window"].str.startswith("summer") & (d["date"].dt.year >= 2021)
+        big = d["fee_eur"] >= 60e6
+        mid = d["worth"] >= 5e6
+        buyer = {"share_deals": round(float(pl.mean() * 100), 0), "share_money": round(float(d.loc[pl & su, "fee_eur"].sum() / d.loc[su, "fee_eur"].sum() * 100), 0),
+                 "big_fees": int(big.sum()), "big_fees_pl": int((big & pl).sum()),
+                 "others_ratio": round(float(np.exp(np.log(d.loc[~pl & mid, "fee_eur"] / d.loc[~pl & mid, "worth"]).median())), 2),
+                 "premium": [{"worth": w_, "pct": round(float(np.expm1(bb["buyer_pl"] + bb.get("buyer_x_worth", 0.0) * np.log(w_ / 5)) * 100), 0)}
+                             for w_ in (5, 15, 40, 100)],
+                 "chance": [{"worth": f"{lo}–{hi}" if hi < 999 else f"{lo}+", "pct": round(float(pl[(d["worth"] >= lo * 1e6) & (d["worth"] < hi * 1e6)].mean() * 100), 0)}
+                            for lo, hi in ((0, 5), (5, 15), (15, 40), (40, 999))]}
     ss = fm["spec"]["summer_share"]
     return {
-        "moves": int(fm["rows"]), "trained_until": fm["trained_until"], "half_life": fm.get("half_life"),
+        "moves": int(fm["rows"]), "trained_until": fm["trained_until"], "half_life": fm.get("half_life"), "buyer": buyer,
         "value_rows": int(meta["train_rows"]), "value_r2_forward": [f["r2"] for f in meta["report"]["forward"]],
         "value_error_forward": [f["median_abs_pct_error"] for f in meta["report"]["forward"]],
         "summer_pct": pct("summer"), "year_pct": pct("year"), "club_strength_pct": pct("team_rel"),

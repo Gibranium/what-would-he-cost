@@ -1,6 +1,6 @@
 # What would he cost?
 
-One fair transfer price per player, learned from real fees. Streamlit app by Davide Gualano (The Cutback).
+A fair transfer price per player, learned from real fees: what a Premier League club would pay, what anyone else would, and the mix of the two. Streamlit app by Davide Gualano (The Cutback).
 
 - `app.py`: the app. Run locally with `streamlit run app.py`.
 - `data/players.csv`, `data/market.json`: the only data the app reads.

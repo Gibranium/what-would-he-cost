@@ -1,5 +1,5 @@
 """
-What would he cost? — one fair transfer price per player, learned from real fees.
+What would he cost? — a fair transfer price per player (Premier League buyer, any other buyer, and the mix), learned from real fees.
 
 Davide Gualano · The Cutback. Data: data/players.csv and data/market.json, written by build_data.py from my
 value model. Only my model's outputs are here: no third-party values, ids or event data.
@@ -109,9 +109,9 @@ def effect_bars(df, label, value="pct", sort=None, ref_note=None):
 fin = players[players["season"] == "2025/26"]
 st.markdown("<h1>What would he cost?</h1>", unsafe_allow_html=True)
 st.markdown(
-    f"<div class='lede'>One fair transfer price for {len(fin):,} players in {fin['league'].nunique()} leagues, "
-    f"learned from {market['moves']:,} fees clubs actually paid. Every price comes with a range, "
-    f"and I show how often the range was right.</div>"
+    f"<div class='lede'>A fair transfer price for {len(fin):,} players in {fin['league'].nunique()} leagues, "
+    f"learned from {market['moves']:,} fees clubs actually paid: what a Premier League club would pay, what anyone else would, "
+    f"and the one figure in between. Every price comes with a range, and I show how often the range was right.</div>"
     f"<div class='small'>Everything I'd build for you, I've already built in public. This is the price part of a "
     f"<a href='{SITE}'>Second opinion</a>.</div>", unsafe_allow_html=True)
 st.write("")
@@ -175,11 +175,16 @@ with tab_price:
             hist_note = "" if season == "2025/26" else (
                 f" About {h:.0%} of his worth here comes from his last full season, the rest from this one."
                 if h > 0 else " No full season behind him in my data: this rests on this season's games alone.")
+            two = ""
+            if pd.notna(r.get("price_pl", np.nan)) and abs(r["price_pl"] / r["price_other"] - 1) > 0.005:
+                two = (f"<div class='rng'>If a Premier League club buys: <b>{eur(r['price_pl'])}</b> · anyone else: <b>{eur(r['price_other'])}</b> · "
+                       f"players like him go to a Premier League club {r['pl_chance']:.0%} of the time</div>")
             st.markdown(f"""
 <div class='price-card'>
   <div class='who'>{r['player']} · {r['team']} · {r['league']} · {r['role']} · {r['age']:.0f} · {r['minutes']:,} min ({r['season']})</div>
   <div class='big'>{eur(r['price'])}</div>
   <div class='rng'>80% range: {eur(r['price_low'])} – {eur(r['price_high'])}</div>
+  {two}
   <div class='note'>What his profile is worth: {eur(r['worth'])} ({eur(r['worth_low'])} – {eur(r['worth_high'])}).
   The fair price is what clubs have paid for players like him: same worth, age, role, league and situation.{hist_note}</div>
 </div>""", unsafe_allow_html=True)
@@ -220,15 +225,31 @@ with tab_market:
                 f"profile, from {market['moves']:,} permanent transfers with a reported fee "
                 f"(to {market['trained_until'][:7]}). Recent moves count more, so this is today's market.")
 
+    bu = market.get("buyer")
+    if bu:
+        st.subheader("Who buys")
+        prem = pd.DataFrame(bu["premium"]).assign(worth=lambda x: x["worth"].map(lambda w: f"worth €{w:g}m"))
+        st.markdown(f"The biggest effect of all. Premier League clubs make {bu['share_deals']:.0f}% of the deals and spend "
+                    f"{bu['share_money']:.0f}% of the money in summer windows; {bu['big_fees_pl']} of the {bu['big_fees']} fees of "
+                    f"€60m or more were theirs. For the same player sold by the same club, they pay more than any other "
+                    f"buyer, and the extra is largest on cheap players: **{bu['premium'][0]['pct']:+.0f}%** at a worth of "
+                    f"€{bu['premium'][0]['worth']:g}m, **{bu['premium'][-1]['pct']:+.0f}%** at €{bu['premium'][-1]['worth']:g}m. "
+                    f"Every other buyer pays about {bu['others_ratio']:.2f} times the worth, at every level.")
+        st.altair_chart(effect_bars(prem, "worth", sort=list(prem["worth"]), ref_note="Premier League buyer vs any other buyer"),
+                        width="stretch", theme=None)
+        st.markdown("How often a sold player goes to a Premier League club: "
+                    + ", ".join(f"**{c['pct']:.0f}%** of those worth " + (f"€{c['worth'][:-1]}m or more" if c['worth'].endswith('+') else f"€{c['worth']}m") for c in bu["chance"])
+                    + ". That share is what turns the two prices on a player's card into one fair price.")
+
     st.subheader("Where he's sold from")
     sl = {r["league"]: r["pct"] for r in market["sellers"]}
     top, low = max(sl, key=sl.get), min(sl, key=sl.get)
     st.markdown(f"Two players with the same worth don't sell for the same fee: it depends on the league that sells "
                 f"them. Each bar is the fee compared with the same player sold by a Serie A club. A player "
                 f"sold from {top} goes for **{sl[top]:+.0f}%**, one sold from {low} for **{sl[low]:+.0f}%**.")
-    st.markdown("<div class='small'>The reason is mostly who buys. Players in England's lower leagues are bought "
-                "by richer English clubs; South American clubs sell to Europe. The fee follows the buyer's money, "
-                "and it shows up here under the seller's league.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='small'>These bars are with the Premier League buyer already taken out (see above). What is left "
+                "is still partly about buyers the model doesn't name: players in England's lower leagues are bought by richer "
+                "English clubs, South American clubs sell to Europe, and that shows up here under the seller's league.</div>", unsafe_allow_html=True)
     st.altair_chart(effect_bars(pd.DataFrame(market["sellers"]), "league", ref_note="vs a Serie A seller"),
                     width="stretch", theme=None)
 
@@ -297,7 +318,8 @@ with tab_check:
     ck = market.get("checks", {})
     ten = ck.get("ten_million", {})
     st.markdown("Every transfer window since summer 2024, priced by a model trained only on the moves before it, "
-                "then checked against the fee that was actually paid.")
+                "then checked against the fee that was actually paid. The model is not told who bought him: "
+                "it prices the move with the one fair price, as you would before a deal.")
     t1, t2, t3 = st.columns(3)
     t1.markdown(f"<div class='tile'><div class='v'>{fair.get('inside_80pct_range', 0):.0f}%</div>"
                 f"<div class='l'>of real fees inside my 80% range. It should be about 80: the ranges are honest.</div></div>",
@@ -379,6 +401,25 @@ with tab_method:
     role_err = (f" (typical gap {re_['Goalkeeper']:.0f}% and {re_['Striker']:.0f}%, against "
                 f"{min(v for k, v in re_.items() if k not in ('Goalkeeper', 'Striker')):.0f}–"
                 f"{max(v for k, v in re_.items() if k not in ('Goalkeeper', 'Striker')):.0f}% for the other roles)") if re_ else ""
+    bu = market.get("buyer")
+    if bu:
+        prem = {p["worth"]: p["pct"] for p in bu["premium"]}
+        ch = {c["worth"]: c["pct"] for c in bu["chance"]}
+        buyer_txt = f"""**One fair price, and the two behind it.** Nobody knows where a player goes next, but one thing about the buyer changes
+the fee more than anything else I can measure: whether it is a Premier League club. They are {bu['share_deals']:.0f}% of the
+deals and {bu['share_money']:.0f}% of the money spent in summer windows, and {bu['big_fees_pl']} of the {bu['big_fees']} fees of
+€60m or more were paid by them. For the same player, same age, same selling club, a Premier League buyer pays about
+{prem[5]:+.0f}% at a worth of €5m, {prem[15]:+.0f}% at €15m, {prem[40]:+.0f}% at €40m and {prem[100]:+.0f}% at €100m: the
+premium is largest on cheap players and almost gone at the very top. Every other buyer pays close to the worth
+(about {bu['others_ratio']:.2f} times it above €5m), at every level.
+
+So each player has two prices, *if a Premier League club buys* and *anyone else*, and the fair price is the mix of
+the two by how often players like him (worth, age, selling league) are bought by a Premier League club: {ch['0–5']:.0f}%
+of players worth under €5m, {ch['5–15']:.0f}% at €5–15m, {ch['15–40']:.0f}% at €15–40m, {ch['40+']:.0f}% above €40m.
+Why only this buyer: it is the only one big and frequent enough to measure. I don't price per club."""
+    else:
+        buyer_txt = """**One price, not one per buyer.** Nobody knows where a player goes next. The fees of similar players already carry
+where players like him realistically went."""
     st.markdown(f"""
 **Two steps.**
 
@@ -395,9 +436,7 @@ with tab_method:
    window, and football inflation (recent moves weigh more: half-life {market.get('half_life', 2):g} years). For this
    season's players, the actual years left on the contract replace the years at the club.
 
-**One price, not one per buyer.** Nobody knows where a player goes next. The fees of similar players already carry
-where players like him realistically went: a 2. Bundesliga striker is priced from what 2. Bundesliga strikers fetched,
-not from what a Premier League club would pay.
+{buyer_txt}
 
 **What it can't see.**
 - Contract length for past moves (only current contracts are public), add-ons, sell-on clauses, and how badly a club
