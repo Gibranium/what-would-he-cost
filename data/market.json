@@ -1,5 +1,5 @@
 {
- "moves": 3226,
+ "moves": 3227,
  "trained_until": "2026-09-10",
  "half_life": 2.0,
  "buyer": {
@@ -7,29 +7,29 @@
   "share_money": 47.0,
   "big_fees": 74,
   "big_fees_pl": 56,
-  "others_ratio": 0.93,
+  "others_ratio": 0.95,
   "premium": [
    {
     "worth": 5,
-    "pct": 125.0
+    "pct": 124.0
    },
    {
     "worth": 15,
-    "pct": 77.0
+    "pct": 76.0
    },
    {
     "worth": 40,
-    "pct": 43.0
+    "pct": 41.0
    },
    {
     "worth": 100,
-    "pct": 17.0
+    "pct": 15.0
    }
   ],
   "chance": [
    {
     "worth": "0\u20135",
-    "pct": 4.0
+    "pct": 3.0
    },
    {
     "worth": "5\u201315",
@@ -41,24 +41,24 @@
    },
    {
     "worth": "40+",
-    "pct": 67.0
+    "pct": 66.0
    }
   ]
  },
  "value_rows": 34061,
  "value_r2_forward": [
-  0.878,
-  0.885,
+  0.879,
+  0.887,
   0.849
  ],
  "value_error_forward": [
-  45.3,
+  44.6,
   41.4,
-  43.3
+  43.9
  ],
- "summer_pct": 24.7,
- "year_pct": 2.4,
- "club_strength_pct": 6.7,
+ "summer_pct": 24.0,
+ "year_pct": 2.3,
+ "club_strength_pct": 6.8,
  "summer_share": {
   "Argentina": 0.444,
   "Belgian Pro League": 0.923,
@@ -82,71 +82,71 @@
  "sellers": [
   {
    "league": "League One",
-   "pct": 63.5
+   "pct": 64.0
   },
   {
    "league": "Argentina",
-   "pct": 44.8
+   "pct": 45.2
   },
   {
    "league": "Brasileir\u00e3o",
-   "pct": 26.2
+   "pct": 27.4
   },
   {
    "league": "Scottish Premiership",
-   "pct": 13.0
+   "pct": 14.2
   },
   {
    "league": "Championship",
-   "pct": 12.1
+   "pct": 11.7
   },
   {
    "league": "Liga Portugal",
-   "pct": 1.0
+   "pct": 2.2
+  },
+  {
+   "league": "2. Bundesliga",
+   "pct": 0.1
   },
   {
    "league": "Serie A",
    "pct": 0.0
   },
   {
-   "league": "2. Bundesliga",
-   "pct": -0.6
-  },
-  {
    "league": "Belgian Pro League",
-   "pct": -2.4
+   "pct": -3.0
   },
   {
    "league": "La Liga",
-   "pct": -3.8
+   "pct": -4.5
   },
   {
    "league": "S\u00fcper Lig",
-   "pct": -11.0
+   "pct": -11.7
   },
   {
    "league": "Eredivisie",
-   "pct": -12.0
-  },
-  {
-   "league": "Premier League",
-   "pct": -15.8
+   "pct": -11.8
   },
   {
    "league": "Russian Premier League",
-   "pct": -16.3
+   "pct": -14.9
+  },
+  {
+   "league": "Premier League",
+   "pct": -15.3
   },
   {
    "league": "Ligue 1",
-   "pct": -16.7
+   "pct": -17.4
   },
   {
    "league": "Bundesliga",
-   "pct": -20.4
+   "pct": -20.7
   },
   {
    "league": "MLS",
-   "pct": -42.0
+   "pct": -41.4
   }
  ],
  "roles": [
@@ -160,29 +160,29 @@
   },
   {
    "role": "Goalkeeper",
-   "pct": -11.9
+   "pct": -10.1
   },
   {
    "role": "Attacking mid / winger",
-   "pct": -13.6
+   "pct": -13.7
   },
   {
    "role": "Central midfielder",
-   "pct": -18.8
+   "pct": -19.0
   },
   {
    "role": "Full-back / wing-back",
-   "pct": -20.8
+   "pct": -21.4
   }
  ],
  "tenure": [
   {
    "years": "<1",
-   "pct": 10.5
+   "pct": 11.0
   },
   {
    "years": "1-2",
-   "pct": 2.3
+   "pct": 2.5
   },
   {
    "years": "2-3",
@@ -190,83 +190,83 @@
   },
   {
    "years": "3-4",
-   "pct": -12.4
+   "pct": -12.5
   },
   {
    "years": "4+",
-   "pct": -12.0
+   "pct": -11.9
   }
  ],
  "age_curve": [
   {
    "worth": "\u20ac2m worth",
    "age": 18.0,
-   "pct": 126.4
+   "pct": 130.8
   },
   {
    "worth": "\u20ac2m worth",
    "age": 18.5,
-   "pct": 110.5
+   "pct": 114.2
   },
   {
    "worth": "\u20ac2m worth",
    "age": 19.0,
-   "pct": 96.2
+   "pct": 99.3
   },
   {
    "worth": "\u20ac2m worth",
    "age": 19.5,
-   "pct": 83.2
+   "pct": 85.8
   },
   {
    "worth": "\u20ac2m worth",
    "age": 20.0,
-   "pct": 71.5
+   "pct": 73.6
   },
   {
    "worth": "\u20ac2m worth",
    "age": 20.5,
-   "pct": 60.9
+   "pct": 62.6
   },
   {
    "worth": "\u20ac2m worth",
    "age": 21.0,
-   "pct": 51.3
+   "pct": 52.7
   },
   {
    "worth": "\u20ac2m worth",
    "age": 21.5,
-   "pct": 42.5
+   "pct": 43.7
   },
   {
    "worth": "\u20ac2m worth",
    "age": 22.0,
-   "pct": 34.6
+   "pct": 35.5
   },
   {
    "worth": "\u20ac2m worth",
    "age": 22.5,
-   "pct": 27.4
+   "pct": 28.1
   },
   {
    "worth": "\u20ac2m worth",
    "age": 23.0,
-   "pct": 20.8
+   "pct": 21.3
   },
   {
    "worth": "\u20ac2m worth",
    "age": 23.5,
-   "pct": 14.9
+   "pct": 15.2
   },
   {
    "worth": "\u20ac2m worth",
    "age": 24.0,
-   "pct": 9.4
+   "pct": 9.6
   },
   {
    "worth": "\u20ac2m worth",
    "age": 24.5,
-   "pct": 4.5
+   "pct": 4.6
   },
   {
    "worth": "\u20ac2m worth",
@@ -276,157 +276,157 @@
   {
    "worth": "\u20ac2m worth",
    "age": 25.5,
-   "pct": -4.1
+   "pct": -4.2
   },
   {
    "worth": "\u20ac2m worth",
    "age": 26.0,
-   "pct": -7.8
+   "pct": -8.0
   },
   {
    "worth": "\u20ac2m worth",
    "age": 26.5,
-   "pct": -11.2
+   "pct": -11.4
   },
   {
    "worth": "\u20ac2m worth",
    "age": 27.0,
-   "pct": -14.3
+   "pct": -14.5
   },
   {
    "worth": "\u20ac2m worth",
    "age": 27.5,
-   "pct": -17.0
+   "pct": -17.3
   },
   {
    "worth": "\u20ac2m worth",
    "age": 28.0,
-   "pct": -19.6
+   "pct": -19.9
   },
   {
    "worth": "\u20ac2m worth",
    "age": 28.5,
-   "pct": -21.8
+   "pct": -22.2
   },
   {
    "worth": "\u20ac2m worth",
    "age": 29.0,
-   "pct": -23.8
+   "pct": -24.2
   },
   {
    "worth": "\u20ac2m worth",
    "age": 29.5,
-   "pct": -25.7
+   "pct": -26.0
   },
   {
    "worth": "\u20ac2m worth",
    "age": 30.0,
-   "pct": -27.3
+   "pct": -27.7
   },
   {
    "worth": "\u20ac2m worth",
    "age": 30.5,
-   "pct": -28.7
+   "pct": -29.1
   },
   {
    "worth": "\u20ac2m worth",
    "age": 31.0,
-   "pct": -29.9
+   "pct": -30.3
   },
   {
    "worth": "\u20ac2m worth",
    "age": 31.5,
-   "pct": -31.0
+   "pct": -31.4
   },
   {
    "worth": "\u20ac2m worth",
    "age": 32.0,
-   "pct": -31.9
+   "pct": -32.3
   },
   {
    "worth": "\u20ac2m worth",
    "age": 32.5,
-   "pct": -32.6
+   "pct": -33.0
   },
   {
    "worth": "\u20ac2m worth",
    "age": 33.0,
-   "pct": -33.2
-  },
-  {
-   "worth": "\u20ac2m worth",
-   "age": 33.5,
    "pct": -33.6
   },
   {
    "worth": "\u20ac2m worth",
+   "age": 33.5,
+   "pct": -34.0
+  },
+  {
+   "worth": "\u20ac2m worth",
    "age": 34.0,
-   "pct": -33.9
+   "pct": -34.2
   },
   {
    "worth": "\u20ac10m worth",
    "age": 18.0,
-   "pct": 74.4
+   "pct": 76.5
   },
   {
    "worth": "\u20ac10m worth",
    "age": 18.5,
-   "pct": 65.2
+   "pct": 67.0
   },
   {
    "worth": "\u20ac10m worth",
    "age": 19.0,
-   "pct": 56.8
+   "pct": 58.3
   },
   {
    "worth": "\u20ac10m worth",
    "age": 19.5,
-   "pct": 49.2
+   "pct": 50.5
   },
   {
    "worth": "\u20ac10m worth",
    "age": 20.0,
-   "pct": 42.3
+   "pct": 43.4
   },
   {
    "worth": "\u20ac10m worth",
    "age": 20.5,
-   "pct": 36.0
+   "pct": 36.9
   },
   {
    "worth": "\u20ac10m worth",
    "age": 21.0,
-   "pct": 30.3
+   "pct": 31.0
   },
   {
    "worth": "\u20ac10m worth",
    "age": 21.5,
-   "pct": 25.1
+   "pct": 25.6
   },
   {
    "worth": "\u20ac10m worth",
    "age": 22.0,
-   "pct": 20.3
+   "pct": 20.8
   },
   {
    "worth": "\u20ac10m worth",
    "age": 22.5,
-   "pct": 16.0
+   "pct": 16.4
   },
   {
    "worth": "\u20ac10m worth",
    "age": 23.0,
-   "pct": 12.1
+   "pct": 12.4
   },
   {
    "worth": "\u20ac10m worth",
    "age": 23.5,
-   "pct": 8.6
+   "pct": 8.8
   },
   {
    "worth": "\u20ac10m worth",
    "age": 24.0,
-   "pct": 5.4
+   "pct": 5.5
   },
   {
    "worth": "\u20ac10m worth",
@@ -446,37 +446,37 @@
   {
    "worth": "\u20ac10m worth",
    "age": 26.0,
-   "pct": -4.3
+   "pct": -4.4
   },
   {
    "worth": "\u20ac10m worth",
    "age": 26.5,
-   "pct": -6.1
+   "pct": -6.2
   },
   {
    "worth": "\u20ac10m worth",
    "age": 27.0,
-   "pct": -7.6
+   "pct": -7.7
   },
   {
    "worth": "\u20ac10m worth",
    "age": 27.5,
-   "pct": -8.9
+   "pct": -9.0
   },
   {
    "worth": "\u20ac10m worth",
    "age": 28.0,
-   "pct": -10.0
+   "pct": -10.1
   },
   {
    "worth": "\u20ac10m worth",
    "age": 28.5,
-   "pct": -10.9
+   "pct": -11.0
   },
   {
    "worth": "\u20ac10m worth",
    "age": 29.0,
-   "pct": -11.6
+   "pct": -11.7
   },
   {
    "worth": "\u20ac10m worth",
@@ -491,7 +491,7 @@
   {
    "worth": "\u20ac10m worth",
    "age": 30.5,
-   "pct": -12.4
+   "pct": -12.5
   },
   {
    "worth": "\u20ac10m worth",
@@ -506,77 +506,77 @@
   {
    "worth": "\u20ac10m worth",
    "age": 32.0,
-   "pct": -11.5
+   "pct": -11.4
   },
   {
    "worth": "\u20ac10m worth",
    "age": 32.5,
-   "pct": -10.9
+   "pct": -10.7
   },
   {
    "worth": "\u20ac10m worth",
    "age": 33.0,
-   "pct": -10.0
+   "pct": -9.7
   },
   {
    "worth": "\u20ac10m worth",
    "age": 33.5,
-   "pct": -8.8
+   "pct": -8.5
   },
   {
    "worth": "\u20ac10m worth",
    "age": 34.0,
-   "pct": -7.5
+   "pct": -7.1
   },
   {
    "worth": "\u20ac40m worth",
    "age": 18.0,
-   "pct": 39.2
+   "pct": 40.1
   },
   {
    "worth": "\u20ac40m worth",
    "age": 18.5,
-   "pct": 34.0
+   "pct": 34.8
   },
   {
    "worth": "\u20ac40m worth",
    "age": 19.0,
-   "pct": 29.3
+   "pct": 29.9
   },
   {
    "worth": "\u20ac40m worth",
    "age": 19.5,
-   "pct": 25.1
+   "pct": 25.5
   },
   {
    "worth": "\u20ac40m worth",
    "age": 20.0,
-   "pct": 21.2
+   "pct": 21.6
   },
   {
    "worth": "\u20ac40m worth",
    "age": 20.5,
-   "pct": 17.7
+   "pct": 18.0
   },
   {
    "worth": "\u20ac40m worth",
    "age": 21.0,
-   "pct": 14.6
+   "pct": 14.8
   },
   {
    "worth": "\u20ac40m worth",
    "age": 21.5,
-   "pct": 11.8
+   "pct": 11.9
   },
   {
    "worth": "\u20ac40m worth",
    "age": 22.0,
-   "pct": 9.3
+   "pct": 9.4
   },
   {
    "worth": "\u20ac40m worth",
    "age": 22.5,
-   "pct": 7.1
+   "pct": 7.2
   },
   {
    "worth": "\u20ac40m worth",
@@ -621,109 +621,109 @@
   {
    "worth": "\u20ac40m worth",
    "age": 27.0,
-   "pct": -1.5
+   "pct": -1.4
   },
   {
    "worth": "\u20ac40m worth",
    "age": 27.5,
-   "pct": -1.3
+   "pct": -1.2
   },
   {
    "worth": "\u20ac40m worth",
    "age": 28.0,
-   "pct": -0.9
+   "pct": -0.8
   },
   {
    "worth": "\u20ac40m worth",
    "age": 28.5,
-   "pct": -0.3
+   "pct": -0.1
   },
   {
    "worth": "\u20ac40m worth",
    "age": 29.0,
-   "pct": 0.5
+   "pct": 0.8
   },
   {
    "worth": "\u20ac40m worth",
    "age": 29.5,
-   "pct": 1.6
+   "pct": 1.9
   },
   {
    "worth": "\u20ac40m worth",
    "age": 30.0,
-   "pct": 2.9
+   "pct": 3.3
   },
   {
    "worth": "\u20ac40m worth",
    "age": 30.5,
-   "pct": 4.5
+   "pct": 5.0
   },
   {
    "worth": "\u20ac40m worth",
    "age": 31.0,
-   "pct": 6.3
+   "pct": 6.9
   },
   {
    "worth": "\u20ac40m worth",
    "age": 31.5,
-   "pct": 8.4
+   "pct": 9.1
   },
   {
    "worth": "\u20ac40m worth",
    "age": 32.0,
-   "pct": 10.8
+   "pct": 11.6
   },
   {
    "worth": "\u20ac40m worth",
    "age": 32.5,
-   "pct": 13.4
+   "pct": 14.4
   },
   {
    "worth": "\u20ac40m worth",
    "age": 33.0,
-   "pct": 16.4
+   "pct": 17.6
   },
   {
    "worth": "\u20ac40m worth",
    "age": 33.5,
-   "pct": 19.8
+   "pct": 21.1
   },
   {
    "worth": "\u20ac40m worth",
    "age": 34.0,
-   "pct": 23.5
+   "pct": 25.0
   }
  ],
  "inflation": [
   {
    "window": "summer 2021",
    "moves": 299,
-   "pct": -9.1
+   "pct": -6.7
   },
   {
    "window": "summer 2022",
    "moves": 420,
-   "pct": -4.9
+   "pct": -3.3
   },
   {
    "window": "summer 2023",
    "moves": 463,
-   "pct": -1.4
+   "pct": -0.6
   },
   {
    "window": "summer 2024",
    "moves": 446,
-   "pct": 14.5
+   "pct": 14.6
   },
   {
    "window": "summer 2025",
    "moves": 545,
-   "pct": 2.4
+   "pct": 0.6
   },
   {
    "window": "summer 2026",
-   "moves": 519,
-   "pct": 6.3
+   "moves": 520,
+   "pct": 7.2
   }
  ],
  "backtest": [
@@ -736,24 +736,24 @@
   },
   {
    "method": "blend (fair fee + Transfermarkt)",
-   "median_abs_pct_error": 51.5,
+   "median_abs_pct_error": 51.1,
    "mae_log": 0.5,
-   "median_bias_pct": 12.4,
-   "inside_80pct_range": 79.9
+   "median_bias_pct": 12.7,
+   "inside_80pct_range": 80.5
   },
   {
    "method": "fair fee",
-   "median_abs_pct_error": 62.9,
+   "median_abs_pct_error": 62.5,
    "mae_log": 0.6,
-   "median_bias_pct": 9.4,
-   "inside_80pct_range": 80.4
+   "median_bias_pct": 8.1,
+   "inside_80pct_range": 80.9
   },
   {
    "method": "worth alone",
-   "median_abs_pct_error": 73.1,
+   "median_abs_pct_error": 71.5,
    "mae_log": 0.7,
-   "median_bias_pct": 12.6,
-   "inside_80pct_range": 81.3
+   "median_bias_pct": 10.3,
+   "inside_80pct_range": 81.4
   }
  ],
  "backtest_windows": [
@@ -761,31 +761,31 @@
    "window": "summer 2024",
    "method": "fair fee",
    "rows": 446,
-   "mae_log": 0.596,
-   "median_abs_pct_error": 59.9,
-   "r2": 0.714,
-   "median_bias_pct": 17.8,
-   "inside_80pct_range": 81.2
+   "mae_log": 0.593,
+   "median_abs_pct_error": 62.4,
+   "r2": 0.716,
+   "median_bias_pct": 15.4,
+   "inside_80pct_range": 81.4
   },
   {
    "window": "summer 2024",
    "method": "blend (fair fee + Transfermarkt)",
    "rows": 446,
-   "mae_log": 0.494,
-   "median_abs_pct_error": 53.8,
+   "mae_log": 0.492,
+   "median_abs_pct_error": 53.6,
    "r2": 0.802,
-   "median_bias_pct": 22.9,
-   "inside_80pct_range": 84.3
+   "median_bias_pct": 23.0,
+   "inside_80pct_range": 84.1
   },
   {
    "window": "summer 2024",
    "method": "worth alone",
    "rows": 446,
-   "mae_log": 0.659,
-   "median_abs_pct_error": 71.3,
-   "r2": 0.666,
-   "median_bias_pct": 31.1,
-   "inside_80pct_range": 83.4
+   "mae_log": 0.652,
+   "median_abs_pct_error": 67.8,
+   "r2": 0.67,
+   "median_bias_pct": 27.9,
+   "inside_80pct_range": 83.0
   },
   {
    "window": "summer 2024",
@@ -801,30 +801,30 @@
    "window": "winter 2025",
    "method": "fair fee",
    "rows": 101,
-   "mae_log": 0.811,
-   "median_abs_pct_error": 98.4,
-   "r2": 0.52,
-   "median_bias_pct": 31.7,
-   "inside_80pct_range": 75.2
+   "mae_log": 0.802,
+   "median_abs_pct_error": 94.8,
+   "r2": 0.534,
+   "median_bias_pct": 38.5,
+   "inside_80pct_range": 77.2
   },
   {
    "window": "winter 2025",
    "method": "blend (fair fee + Transfermarkt)",
    "rows": 101,
-   "mae_log": 0.713,
-   "median_abs_pct_error": 58.8,
-   "r2": 0.582,
-   "median_bias_pct": 6.9,
-   "inside_80pct_range": 70.3
+   "mae_log": 0.708,
+   "median_abs_pct_error": 57.9,
+   "r2": 0.587,
+   "median_bias_pct": 9.6,
+   "inside_80pct_range": 71.3
   },
   {
    "window": "winter 2025",
    "method": "worth alone",
    "rows": 101,
-   "mae_log": 0.913,
-   "median_abs_pct_error": 81.6,
-   "r2": 0.332,
-   "median_bias_pct": -18.0,
+   "mae_log": 0.904,
+   "median_abs_pct_error": 75.9,
+   "r2": 0.335,
+   "median_bias_pct": -18.5,
    "inside_80pct_range": 69.3
   },
   {
@@ -841,31 +841,31 @@
    "window": "summer 2025",
    "method": "fair fee",
    "rows": 545,
-   "mae_log": 0.639,
-   "median_abs_pct_error": 58.8,
-   "r2": 0.668,
-   "median_bias_pct": -0.9,
-   "inside_80pct_range": 80.7
+   "mae_log": 0.636,
+   "median_abs_pct_error": 57.3,
+   "r2": 0.67,
+   "median_bias_pct": -1.5,
+   "inside_80pct_range": 80.9
   },
   {
    "window": "summer 2025",
    "method": "blend (fair fee + Transfermarkt)",
    "rows": 545,
    "mae_log": 0.547,
-   "median_abs_pct_error": 51.5,
+   "median_abs_pct_error": 50.0,
    "r2": 0.757,
-   "median_bias_pct": 9.7,
-   "inside_80pct_range": 79.3
+   "median_bias_pct": 9.1,
+   "inside_80pct_range": 80.6
   },
   {
    "window": "summer 2025",
    "method": "worth alone",
    "rows": 545,
-   "mae_log": 0.694,
-   "median_abs_pct_error": 76.0,
+   "mae_log": 0.692,
+   "median_abs_pct_error": 76.4,
    "r2": 0.641,
-   "median_bias_pct": 8.8,
-   "inside_80pct_range": 80.4
+   "median_bias_pct": 4.9,
+   "inside_80pct_range": 81.3
   },
   {
    "window": "summer 2025",
@@ -881,30 +881,30 @@
    "window": "winter 2026",
    "method": "fair fee",
    "rows": 67,
-   "mae_log": 0.617,
-   "median_abs_pct_error": 59.2,
-   "r2": 0.632,
-   "median_bias_pct": 5.1,
-   "inside_80pct_range": 82.1
+   "mae_log": 0.605,
+   "median_abs_pct_error": 62.6,
+   "r2": 0.644,
+   "median_bias_pct": 7.5,
+   "inside_80pct_range": 83.6
   },
   {
    "window": "winter 2026",
    "method": "blend (fair fee + Transfermarkt)",
    "rows": 67,
-   "mae_log": 0.528,
-   "median_abs_pct_error": 49.4,
-   "r2": 0.708,
-   "median_bias_pct": -16.8,
-   "inside_80pct_range": 88.1
+   "mae_log": 0.524,
+   "median_abs_pct_error": 49.1,
+   "r2": 0.712,
+   "median_bias_pct": -16.1,
+   "inside_80pct_range": 89.6
   },
   {
    "window": "winter 2026",
    "method": "worth alone",
    "rows": 67,
-   "mae_log": 0.733,
-   "median_abs_pct_error": 62.2,
-   "r2": 0.44,
-   "median_bias_pct": -32.3,
+   "mae_log": 0.719,
+   "median_abs_pct_error": 63.1,
+   "r2": 0.452,
+   "median_bias_pct": -32.1,
    "inside_80pct_range": 82.1
   },
   {
@@ -920,38 +920,38 @@
   {
    "window": "summer 2026",
    "method": "fair fee",
-   "rows": 519,
-   "mae_log": 0.593,
-   "median_abs_pct_error": 63.2,
-   "r2": 0.761,
-   "median_bias_pct": 9.2,
-   "inside_80pct_range": 80.2
+   "rows": 520,
+   "mae_log": 0.59,
+   "median_abs_pct_error": 61.9,
+   "r2": 0.762,
+   "median_bias_pct": 6.1,
+   "inside_80pct_range": 80.8
   },
   {
    "window": "summer 2026",
    "method": "blend (fair fee + Transfermarkt)",
-   "rows": 519,
+   "rows": 520,
    "mae_log": 0.515,
-   "median_abs_pct_error": 48.3,
-   "r2": 0.813,
-   "median_bias_pct": 11.0,
-   "inside_80pct_range": 77.6
+   "median_abs_pct_error": 49.2,
+   "r2": 0.814,
+   "median_bias_pct": 11.9,
+   "inside_80pct_range": 77.9
   },
   {
    "window": "summer 2026",
    "method": "worth alone",
-   "rows": 519,
-   "mae_log": 0.647,
-   "median_abs_pct_error": 71.5,
+   "rows": 520,
+   "mae_log": 0.645,
+   "median_abs_pct_error": 69.8,
    "r2": 0.712,
-   "median_bias_pct": 12.4,
-   "inside_80pct_range": 82.7
+   "median_bias_pct": 11.9,
+   "inside_80pct_range": 82.5
   },
   {
    "window": "summer 2026",
    "method": "Transfermarkt value",
-   "rows": 519,
-   "mae_log": 0.522,
+   "rows": 520,
+   "mae_log": 0.521,
    "median_abs_pct_error": 45.8,
    "r2": 0.787,
    "median_bias_pct": 14.3,
@@ -963,146 +963,146 @@
    {
     "group": "All",
     "segment": "All moves",
-    "moves": 1678,
-    "fair": 61.6,
-    "tm": 51.2,
-    "blend": 51.1
+    "moves": 1679,
+    "fair": 62.3,
+    "tm": 50.9,
+    "blend": 50.8
    },
    {
     "group": "Fair price",
     "segment": "under \u20ac2m",
-    "moves": 504,
-    "fair": 74.0,
-    "tm": 80.8,
-    "blend": 69.0
+    "moves": 505,
+    "fair": 76.6,
+    "tm": 81.8,
+    "blend": 71.4
    },
    {
     "group": "Fair price",
     "segment": "\u20ac2\u20135m",
-    "moves": 437,
-    "fair": 76.6,
-    "tm": 50.9,
-    "blend": 56.4
+    "moves": 436,
+    "fair": 72.5,
+    "tm": 50.1,
+    "blend": 53.6
    },
    {
     "group": "Fair price",
     "segment": "\u20ac5\u201315m",
-    "moves": 389,
-    "fair": 56.8,
-    "tm": 43.0,
-    "blend": 46.1
+    "moves": 387,
+    "fair": 57.1,
+    "tm": 42.9,
+    "blend": 48.7
    },
    {
     "group": "Fair price",
     "segment": "\u20ac15\u201340m",
-    "moves": 275,
-    "fair": 44.9,
-    "tm": 41.3,
-    "blend": 37.4
+    "moves": 279,
+    "fair": 43.4,
+    "tm": 42.7,
+    "blend": 36.5
    },
    {
     "group": "Fair price",
     "segment": "\u20ac40m and over",
-    "moves": 73,
-    "fair": 34.6,
-    "tm": 46.9,
-    "blend": 37.5
+    "moves": 72,
+    "fair": 34.0,
+    "tm": 44.6,
+    "blend": 37.3
    },
    {
     "group": "Age",
     "segment": "21 and under",
     "moves": 153,
-    "fair": 62.5,
+    "fair": 62.4,
     "tm": 65.1,
-    "blend": 57.3
+    "blend": 58.0
    },
    {
     "group": "Age",
     "segment": "22\u201324",
     "moves": 500,
-    "fair": 59.4,
+    "fair": 58.9,
     "tm": 57.5,
-    "blend": 52.2
+    "blend": 51.4
    },
    {
     "group": "Age",
     "segment": "25\u201327",
-    "moves": 537,
-    "fair": 62.3,
+    "moves": 538,
+    "fair": 64.2,
     "tm": 44.0,
-    "blend": 48.0
+    "blend": 48.6
    },
    {
     "group": "Age",
     "segment": "28\u201330",
     "moves": 332,
-    "fair": 64.0,
+    "fair": 65.4,
     "tm": 47.0,
-    "blend": 49.1
+    "blend": 47.6
    },
    {
     "group": "Age",
     "segment": "31 and over",
     "moves": 156,
-    "fair": 63.8,
+    "fair": 61.3,
     "tm": 64.1,
-    "blend": 60.0
+    "blend": 57.7
    },
    {
     "group": "Role",
     "segment": "Goalkeeper",
-    "moves": 92,
-    "fair": 67.7,
-    "tm": 65.5,
-    "blend": 55.1
+    "moves": 93,
+    "fair": 65.8,
+    "tm": 64.4,
+    "blend": 54.0
    },
    {
     "group": "Role",
     "segment": "Centre-back",
     "moves": 278,
-    "fair": 64.1,
+    "fair": 64.0,
     "tm": 62.6,
-    "blend": 54.0
+    "blend": 51.2
    },
    {
     "group": "Role",
     "segment": "Full-back / wing-back",
     "moves": 239,
-    "fair": 66.9,
+    "fair": 64.5,
     "tm": 44.9,
-    "blend": 52.0
+    "blend": 51.9
    },
    {
     "group": "Role",
     "segment": "Central midfielder",
-    "moves": 278,
-    "fair": 62.9,
-    "tm": 43.9,
-    "blend": 48.2
+    "moves": 279,
+    "fair": 61.2,
+    "tm": 44.0,
+    "blend": 49.3
    },
    {
     "group": "Role",
     "segment": "Attacking mid / winger",
-    "moves": 478,
-    "fair": 61.0,
-    "tm": 51.7,
-    "blend": 52.0
+    "moves": 477,
+    "fair": 62.4,
+    "tm": 52.4,
+    "blend": 51.2
    },
    {
     "group": "Role",
     "segment": "Striker",
     "moves": 313,
-    "fair": 58.5,
+    "fair": 57.5,
     "tm": 55.4,
-    "blend": 46.2
+    "blend": 45.6
    }
   ],
   "ten_million": {
    "fair": {
     "q10": 3.5,
-    "q25": 6.5,
-    "q75": 16.5,
-    "q90": 25.1,
+    "q25": 6.4,
+    "q75": 16.6,
+    "q90": 25.0,
     "within_half": 52.0
    },
    "tm": {
@@ -1113,17 +1113,21 @@
     "within_half": 57.0
    },
    "blend": {
-    "q10": 4.2,
+    "q10": 4.1,
     "q25": 7.1,
-    "q75": 15.7,
-    "q90": 21.8,
+    "q75": 15.5,
+    "q90": 21.5,
     "within_half": 57.0
    }
   },
   "role_error": [
    {
     "role": "Full-back / wing-back",
-    "pct": 35.5
+    "pct": 35.8
+   },
+   {
+    "role": "Centre-back",
+    "pct": 36.3
    },
    {
     "role": "Central midfielder",
@@ -1131,19 +1135,15 @@
    },
    {
     "role": "Attacking mid / winger",
-    "pct": 36.4
-   },
-   {
-    "role": "Centre-back",
-    "pct": 36.8
+    "pct": 36.7
    },
    {
     "role": "Striker",
-    "pct": 40.8
+    "pct": 40.6
    },
    {
     "role": "Goalkeeper",
-    "pct": 44.1
+    "pct": 43.5
    }
   ],
   "ahead": [
@@ -1151,17 +1151,17 @@
     "group": "My worth far below",
     "players": 2788,
     "gap_pct": -47.0,
-    "pct": -9.2
+    "pct": -9.1
    },
    {
     "group": "Below",
     "players": 2787,
     "gap_pct": -23.0,
-    "pct": -4.0
+    "pct": -3.9
    },
    {
     "group": "About equal",
-    "players": 2788,
+    "players": 2787,
     "gap_pct": -2.0,
     "pct": -2.2
    },
@@ -1169,17 +1169,17 @@
     "group": "Above",
     "players": 2787,
     "gap_pct": 26.0,
-    "pct": 3.0
+    "pct": 2.8
    },
    {
     "group": "My worth far above",
     "players": 2788,
     "gap_pct": 80.0,
-    "pct": 13.9
+    "pct": 13.8
    }
   ],
-  "ahead_rows": 13938,
+  "ahead_rows": 13937,
   "ahead_share_closed": 0.16,
-  "blend_rows": 1678
+  "blend_rows": 1679
  }
 }
